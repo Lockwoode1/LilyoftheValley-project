@@ -6,74 +6,54 @@
   <title>Flower Shop Login</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap');
-
     :root {
       --primary-color: #6b705c;
       --accent-color: #a5a58d;
-      --light-color: #e6e6fa; /* Lavender background */
+      --light-color: #e6e6fa;
       --dark-color: #2f3e46;
     }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--light-color);
       color: var(--dark-color);
     }
-
     .login-container {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: var(--light-color);
     }
-
     .login-box {
       background: white;
       padding: 40px;
       border-radius: 16px;
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
       width: 340px;
-      transition: transform 0.3s ease;
     }
-
-    .login-box:hover {
-      transform: scale(1.02);
-    }
-
     input, button {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
       border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 16px;
     }
-
     button {
       background-color: var(--primary-color);
       color: white;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
-
-    button:hover {
-      background-color: #556052;
-    }
-
+    button:hover { background-color: #556052; }
     h2 {
       text-align: center;
       color: var(--primary-color);
     }
-
     #app {
       padding: 40px;
       max-width: 1000px;
       margin: auto;
     }
-
     section {
       margin-bottom: 40px;
       background: white;
@@ -81,32 +61,18 @@
       border-radius: 16px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      padding: 10px 0;
-      border-bottom: 1px solid #ddd;
-    }
-
-    li:last-child {
-      border-bottom: none;
-    }
-
+    ul { list-style: none; padding: 0; }
+    li { padding: 10px 0; border-bottom: 1px solid #ddd; }
+    li:last-child { border-bottom: none; }
     table {
       width: 100%;
       border-collapse: collapse;
     }
-
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: left;
     }
-
     #flower-info {
       font-family: 'Playfair Display', cursive;
       font-size: 18px;
@@ -118,106 +84,85 @@
   <div class="login-container">
     <div class="login-box">
       <h2>Login</h2>
-      <form method="POST" action="/login">
+      <form onsubmit="event.preventDefault(); showApp();">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
       </form>
     </div>
   </div>
-
   <div id="app" style="display:none;">
-    <!-- Educational Section -->
     <section id="education">
       <h2>About the Flower</h2>
-      <div id="flower-info"></div>
+      <div id="flower-info">
+        <p>The Lily of the Valley is a fragrant flower known for purity and joy. Our curated collection features skincare, decor, and lifestyle accessories, each delicately themed with this iconic botanical. Explore our offerings for a touch of elegance in your everyday routine.</p>
+      </div>
     </section>
-
-    <!-- Shop Section -->
     <section id="shop">
       <h2>Shop Products</h2>
-      <div id="product-categories"></div>
-      <div id="product-list"></div>
+      <ul id="product-list"></ul>
     </section>
-
-    <!-- HR Section (Visible to employee/admin) -->
     <section id="hr">
       <h2>Human Resources</h2>
       <table>
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Email</th>
-          </tr>
+          <tr><th>Name</th><th>Role</th><th>Email</th></tr>
         </thead>
         <tbody id="employee-table"></tbody>
       </table>
     </section>
   </div>
-
   <script>
-    const flowerInfo = `
-      <p>
-        The Lily of the Valley is a delicate, bell-shaped flower known for its sweet fragrance
-        and symbolism of purity, humility, and renewal. Commonly found in cool temperate climates,
-        it is often used in wedding bouquets and high-end perfumes for its classic scent.
-        In herbal medicine, it's been admired for its historical applications, and even in folklore,
-        it is said to bring happiness and peace wherever it grows.
-      </p>
-    `;
-
-    const categories = ["Skincare", "Perfume", "Tea", "Candles", "Decor"];
-    const productNames = [
-      "Lily Bloom Face Cream", "Valley Essence Serum", "Botanical Eye Gel", "Petal Soft Lotion", "Blooming Skin Elixir",
-      "Morning Dew Perfume", "Evening Blossom Mist", "Floral Noir Scent", "Pure Lily Roll-on", "Signature Petal Spray",
-      "Soothing Lily Tea", "Floral Green Tea Blend", "Relaxing Petal Infusion", "Lily-Chamomile Mix", "Aromatic Bloom Tea",
-      "Petal Glow Candle", "Evening Garden Candle", "Lily Breeze Candle", "Tranquil Essence Jar", "Lush Blossom Candle",
-      "Lily Wall Art", "Hand-Painted Vase", "Floral Throw Pillow", "Botanical Coasters", "Lily Garden Print",
-      "Bloom Gift Set", "Petal Pamper Pack", "Tea & Candle Bundle", "Skincare Starter Kit", "Ultimate Lily Collection"
+    const products = [
+      { name: "Lily Valley Body Lotion", category: "Personal Care", price: 9.99 },
+      { name: "Lily of the Valley Soap", category: "Personal Care", price: 3.99 },
+      { name: "Lily Valley Bed Sheets", category: "Home", price: 39.99 },
+      { name: "Lily of the Valley Painting", category: "Decoration", price: 30.99 },
+      { name: "Glass Dome", category: "Decoration", price: 49.99 },
+      { name: "Lily of the Valley Phone Case", category: "Accessories", price: 9.99 },
+      { name: "Lily of the Valley Backpack", category: "Accessories", price: 35.99 },
+      { name: "Lily Valley Shampoo", category: "Personal Care", price: 12.99 },
+      { name: "Lily Valley Conditioner", category: "Personal Care", price: 14.99 },
+      { name: "Lily of the Valley Table Runner", category: "Home", price: 38.99 },
+      { name: "Lily Valley Pillow Cover", category: "Home", price: 19.99 },
+      { name: "Lily Valley Face Cream", category: "Cosmetics", price: 25.99 },
+      { name: "Lily Valley Lip Balm", category: "Cosmetics", price: 4.99 },
+      { name: "Lily Valley Ceramic Vase", category: "Decoration", price: 20.99 },
+      { name: "Hand Cream", category: "Cosmetics", price: 17.99 },
+      { name: "Lily of the Valley Cap", category: "Accessories", price: 12.99 },
+      { name: "Lily of the Valley T-shirt", category: "Accessories", price: 24.99 },
+      { name: "Lily Lotion for Men", category: "Cosmetics", price: 11.99 },
+      { name: "Lily-themed hoodie", category: "Accessories", price: 29.99 },
+      { name: "Lily of the Valley Lamp", category: "Decoration", price: 35.99 },
+      { name: "Lily Valley scented deodorant", category: "Personal Care", price: 6.99 },
+      { name: "Lily of the Valley Scented Candle", category: "Home", price: 15.99 },
+      { name: "Lily of the Valley Design Rug", category: "Home", price: 59.99 },
+      { name: "Lily of the Valley Perfume", category: "Cosmetics", price: 29.99 },
+      { name: "Lily of the Valley Notebook", category: "Accessories", price: 7.99 }
     ];
-
-    const products = productNames.map((name, i) => ({
-      name: name,
-      category: categories[i % categories.length],
-      price: (12 + i).toFixed(2)
-    }));
 
     const employees = [
       { name: "Alice Johnson", role: "Manager", email: "alice@flowershop.com" },
       { name: "Bob Smith", role: "Sales Associate", email: "bob@flowershop.com" },
-      { name: "Clara Lee", role: "Botanist", email: "clara@flowershop.com" },
-      { name: "David Brown", role: "Sales Associate", email: "david@flowershop.com" },
-      { name: "Eva Green", role: "Manager", email: "eva@flowershop.com" }
+      { name: "Clara Lee", role: "Botanist", email: "clara@flowershop.com" }
     ];
 
-    document.querySelector('.login-container').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('hr').style.display = 'block';
+    function showApp() {
+      document.querySelector('.login-container').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
 
-    document.getElementById("flower-info").innerHTML = flowerInfo;
+      const productList = document.getElementById("product-list");
+      productList.innerHTML = products.map(p => `<li><strong>${p.name}</strong> - ${p.category} - $${p.price.toFixed(2)}</li>`).join("");
 
-    document.getElementById("product-categories").innerHTML = `
-      <h4>Categories:</h4>
-      <ul>
-        ${categories.map(cat => `<li>${cat}</li>`).join("")}
-      </ul>
-    `;
-
-    document.getElementById("product-list").innerHTML = `
-      <h4>Available Products:</h4>
-      <ul>
-        ${products.map(p => `<li><strong>${p.name}</strong> - ${p.category} - $${p.price}</li>`).join("")}
-      </ul>
-    `;
-
-    document.getElementById("employee-table").innerHTML = employees.map(emp => `
-      <tr>
-        <td>${emp.name}</td>
-        <td>${emp.role}</td>
-        <td>${emp.email}</td>
-      </tr>
-    `).join("");
+      const employeeTable = document.getElementById("employee-table");
+      employeeTable.innerHTML = employees.map(emp => `
+        <tr>
+          <td>${emp.name}</td>
+          <td>${emp.role}</td>
+          <td>${emp.email}</td>
+        </tr>
+      `).join("");
+    }
   </script>
 </body>
 </html>
