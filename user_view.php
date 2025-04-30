@@ -1,43 +1,8 @@
-<?php
-    $username = $_POST['username'];
-    $password = $_POST['password'];
 
-    require('database.php');
-    
-
-    $sql = 'SELECT * FROM Users WHERE username=?';
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        
-    
-        if ($password === $user['password']) {
-            $role = $user['role'];
-            $userId = $user["id"];
-
-            if($role === 'manager'){
-                header('Location: manager_view.php?userId=$userId');
-                exit();
-            }elseif($role ='customer'){
-                header('Location: user_view.php');
-                exit();
-            }
-
-        } else {
-            $error = "Invalid password.";
-        }
-    } else {
-        $error = "User not found.";
-    }
-?>
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flower Shop Login</title>
@@ -67,12 +32,6 @@
       border-radius: 16px;
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
       width: 340px;
-    }
-    
-    form{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
     input, button {
       width: 100%;
@@ -123,21 +82,44 @@
     }
   </style>
 </head>
-    <body>
-      <div class="login-container">
-        
-        <?php if ($error): ?>
-            <p style="color: red;"><?php echo $error; ?></p>
-        <?php endif; ?>
-
-        <div class="login-box">
-          <h2>Login</h2>
-          <form onsubmit="event.preventDefault(); showApp();">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-          </form>
-        </div>
+<body>
+  <div>
+    <section id="education">
+      <h2>About the Flower</h2>
+      <div id="flower-info">
+        <p>The Lily of the Valley is a fragrant flower known for purity and joy. Our curated collection features skincare, decor, and lifestyle accessories, each delicately themed with this iconic botanical. Explore our offerings for a touch of elegance in your everyday routine.</p>
       </div>
-    </body>
+    </section>
+    <section id="shop">
+      <h2>Shop Products</h2>
+      <ul id="product-list">
+        <?php
+            // $userId = $_GET('userId');
+
+            require('database.php');
+            $sql = "SELECT * FROM Products";
+            $result = $db->query($sql);
+            
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<li><strong>".$row("name")."</strong> - " .$row("category")." - $".$row("price")."</li>";
+                }
+                
+            } else{
+                echo "<h3> No Products found.</h3>";
+            }
+        ?>
+      </ul>
+    </section>
+    <section id="hr">
+      <h2>Human Resources</h2>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Role</th><th>Email</th></tr>
+        </thead>
+        <tbody id="employee-table"></tbody>
+      </table>
+    </section>
+  </div>
+</body>
 </html>
