@@ -1,3 +1,38 @@
+<?php
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+    $phoneNum = $_POST['phoneNum'];
+    $role = 'Customer';
+
+    require('database.php');
+    
+    
+        $sql = "INSERT INTO Users (FirstName, LastName, UserName, Password, Email, Role, Address, PhoneNumber)
+            VALUES (?,?,?,?,?,?,?,?)";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param("ssssssss", $firstName, $lastName, $username, $password, $email, $role, $address, $phoneNum);
+        if($stmt->execute()){
+            $userId = $stmt->insert_id;
+            
+            $customerSql = "INSERT INTO Customer (UserID, ShippingAddress) VALUES (?,?)";
+            $customerStmt = $db->prepare($customerSql);
+            $customerStmt->bind_param("is", $userId, $address);
+            $customerStmt->execute();
+            
+            header("Location: index.php");
+            exit();
+
+    }
+        
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -88,12 +123,24 @@
 </head>
     <body>
       <div class="login-container">
+        
+        
+
         <div class="login-box">
-          <h2>Login</h2>
-          <form onsubmit="event.preventDefault(); showApp();">
+            <?php if ($error): ?>
+                <p style="color: red;"><?php echo $error; ?></p>
+            <?php endif; ?>
+          <h2>Registration</h2>
+          <form method="POST" action="registration.php">
+             <input type="text" name="firstName" placeholder="First Name" required>
+             <input type="text" name="lastName" placeholder="Last Name" required>
+             <input type="email" name="email" placeholder="Email" required>
+             <input type="text" name="address" placeholder="Address" required>
+             <input type="text" name="phoneNum" placeholder="Phone Number" required>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <button type="submit">Register</button>
+            <p>Already have an account register? <a href="index.php">login</a></p>
           </form>
         </div>
       </div>
